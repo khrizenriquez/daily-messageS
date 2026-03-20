@@ -1,0 +1,19 @@
+{
+  "name": "daily-message",
+  "version": "1.0.0",
+  "description": "Envía mensajes de WhatsApp automáticos diarios — motivacionales y amorosos",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/test.js"
+  },
+  "keywords": ["whatsapp", "automation", "messages"],
+  "author": "",
+  "license": "PRIVATE",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.26.1"
+  }
+}
