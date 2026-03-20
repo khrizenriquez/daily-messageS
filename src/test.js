@@ -3,6 +3,7 @@ config.validate();
 
 const { createClient, sendMessage } = require('./whatsappClient');
 const { getRandomMessage } = require('./messageSelector');
+const { appendLog } = require('./logger');
 
 const { FROM_PHONE, TARGET_PHONE } = config;
 
@@ -18,6 +19,7 @@ client.on('ready', async () => {
     console.log(`Mensaje seleccionado: "${message}"`);
 
     await sendMessage(TARGET_PHONE, message);
+    appendLog(FROM_PHONE, TARGET_PHONE, message);
     console.log('Prueba exitosa. Cerrando cliente...');
 
     await client.destroy();

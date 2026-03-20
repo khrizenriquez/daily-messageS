@@ -4,6 +4,7 @@ config.validate();
 const cron = require('node-cron');
 const { createClient, sendMessage } = require('./whatsappClient');
 const { getRandomMessage } = require('./messageSelector');
+const { appendLog } = require('./logger');
 
 const { TARGET_PHONE, FROM_PHONE, MORNING_HOUR, MORNING_MINUTE, EVENING_HOUR, EVENING_MINUTE, MAX_DELAY_MINUTES, TIMEZONE } = config;
 
@@ -22,8 +23,7 @@ async function sendScheduledMessage(timeOfDay) {
 
   const message = getRandomMessage(timeOfDay);
   await sendMessage(TARGET_PHONE, message);
-
-  console.log(`[${new Date().toISOString()}] Mensaje de ${timeOfDay} enviado correctamente.`);
+  appendLog(FROM_PHONE, TARGET_PHONE, message);
 }
 
 console.log('Iniciando daily-message...');
