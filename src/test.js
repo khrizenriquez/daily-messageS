@@ -18,8 +18,8 @@ client.on('ready', async () => {
     const message = getRandomMessage('morning');
     console.log(`Mensaje seleccionado: "${message}"`);
 
-    await sendMessage(TARGET_PHONE, message);
-    appendLog(FROM_PHONE, TARGET_PHONE, message);
+    const result = await sendMessage(TARGET_PHONE, message);
+    appendLog(FROM_PHONE, TARGET_PHONE, message, result);
     console.log('Prueba exitosa. Cerrando cliente...');
 
     await client.destroy();

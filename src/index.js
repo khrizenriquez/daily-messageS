@@ -22,8 +22,8 @@ async function sendScheduledMessage(timeOfDay) {
   await new Promise(resolve => setTimeout(resolve, delayMs));
 
   const message = getRandomMessage(timeOfDay);
-  await sendMessage(TARGET_PHONE, message);
-  appendLog(FROM_PHONE, TARGET_PHONE, message);
+  const result = await sendMessage(TARGET_PHONE, message);
+  appendLog(FROM_PHONE, TARGET_PHONE, message, result);
 }
 
 console.log('Iniciando daily-message...');

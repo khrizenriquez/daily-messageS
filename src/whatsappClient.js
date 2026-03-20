@@ -54,10 +54,13 @@ async function sendMessage(phoneNumber, message) {
   }
 
   const chatId = `${phoneNumber}@c.us`;
-  await client.sendMessage(chatId, message);
+  const result = await client.sendMessage(chatId, message);
 
-  const preview = message.length > 60 ? message.substring(0, 60) + '...' : message;
-  console.log(`Mensaje enviado a ${phoneNumber}: "${preview}"`);
+  return {
+    id: result.id?.id || result.id?._serialized || 'desconocido',
+    timestamp: result.timestamp ? new Date(result.timestamp * 1000).toISOString() : new Date().toISOString(),
+    status: result.id ? 'enviado' : 'sin-confirmacion',
+  };
 }
 
 module.exports = { createClient, isClientReady, sendMessage };
