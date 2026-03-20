@@ -1,16 +1,13 @@
-require('dotenv').config();
+const config = require('./config');
+config.validate();
 
 const { createClient, sendMessage } = require('./whatsappClient');
 const { getRandomMessage } = require('./messageSelector');
 
-const TARGET_PHONE = process.env.TARGET_PHONE;
-
-if (!TARGET_PHONE) {
-  console.error('Error: TARGET_PHONE no esta configurado en .env');
-  process.exit(1);
-}
+const { FROM_PHONE, TARGET_PHONE } = config;
 
 console.log('Iniciando prueba de envio...');
+console.log(`Numero origen:  ${FROM_PHONE}`);
 console.log(`Numero destino: ${TARGET_PHONE}`);
 
 const client = createClient();
