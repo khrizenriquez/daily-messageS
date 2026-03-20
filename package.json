@@ -5,11 +5,16 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "node src/test.js"
+    "send-test": "node src/test.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": ["whatsapp", "automation", "messages"],
   "author": "",
   "license": "PRIVATE",
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  },
   "dependencies": {
     "dotenv": "^16.4.7",
     "node-cron": "^3.0.3",
