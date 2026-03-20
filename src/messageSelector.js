@@ -10,12 +10,12 @@ function loadMessages() {
 
 function loadSentLog() {
   if (!fs.existsSync(LOG_FILE)) {
-    return { buenos_dias: [], buenas_tardes: [] };
+    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] };
   }
   try {
     return JSON.parse(fs.readFileSync(LOG_FILE, 'utf8'));
   } catch {
-    return { buenos_dias: [], buenas_tardes: [] };
+    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] };
   }
 }
 
@@ -27,7 +27,15 @@ function getRandomMessage(timeOfDay) {
   const messages = loadMessages();
   const log = loadSentLog();
 
-  const category = timeOfDay === 'morning' ? 'buenos_dias' : 'buenas_tardes';
+  const primaryCategory = timeOfDay === 'morning' ? 'buenos_dias' : 'buenas_tardes';
+  const supplementary = ['motivacionales', 'amorosos'];
+
+  // 60% categoria del horario, 40% motivacional o amoroso
+  const useSupplementary = Math.random() < 0.4;
+  const category = useSupplementary
+    ? supplementary[Math.floor(Math.random() * supplementary.length)]
+    : primaryCategory;
+
   const pool = messages[category];
   const sent = log[category] || [];
 

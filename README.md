@@ -13,10 +13,15 @@ Aplicación local (Node.js) que envía automáticamente 2 mensajes de WhatsApp a
 
 ## Requisitos
 
-- **macOS** (probado en macOS, pero funciona en Linux/Windows también)
-- **Node.js 18+** — [Descargar aquí](https://nodejs.org/)
-- **WhatsApp** activo en tu teléfono
-- Tu Mac debe estar **encendida y sin suspensión** en los horarios de envío
+- **macOS** (probado en macOS, pero funciona en Linux/Windows tambien)
+- **Node.js 18+** — [Descargar aqui](https://nodejs.org/)
+- **WhatsApp** activo en tu telefono
+- Tu Mac debe estar **encendida y sin suspension** en los horarios de envio
+
+> **Mac con chip Apple Silicon (M1/M2/M3/M4):** Puppeteer puede tener problemas para descargar Chromium compatible. Si `npm start` falla con un error de Chromium, instala Google Chrome normalmente desde [chrome.google.com](https://www.google.com/chrome/) y agrega esta linea a tu `.env`:
+> ```env
+> PUPPETEER_EXECUTABLE_PATH=/Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+> ```
 
 ## Instalación paso a paso
 
@@ -33,9 +38,9 @@ cd daily-message
 npm install
 ```
 
-### 3. Configurar el número destino
+### 3. Configurar numeros y horarios
 
-Copia el archivo de ejemplo y edítalo:
+Copia el archivo de ejemplo y editalo:
 
 ```bash
 cp .env.example .env
@@ -44,20 +49,29 @@ cp .env.example .env
 Edita `.env` con tu editor preferido:
 
 ```env
-# Número destino con código de país, sin espacios ni guiones ni +
-# Ejemplo Guatemala: 50212345678
-# Ejemplo México: 5215512345678
-TARGET_PHONE=50212345678
+# Codigo de pais (Guatemala: 502, Mexico: 52, Argentina: 54)
+COUNTRY_CODE=502
 
-# Horarios de envío (formato cron: minuto hora)
+# Tu numero de WhatsApp (el que manda los mensajes)
+FROM_PHONE=12345678
+
+# Numero que recibe los mensajes
+TARGET_PHONE=87654321
+
+# Horarios de envio (formato 24h)
 MORNING_HOUR=8
 MORNING_MINUTE=0
 EVENING_HOUR=18
 EVENING_MINUTE=0
 
-# Delay aleatorio máximo en minutos (para parecer más natural)
+# Delay aleatorio maximo en minutos
 MAX_DELAY_MINUTES=5
+
+# Zona horaria
+TIMEZONE=America/Guatemala
 ```
+
+Los numeros se pueden escribir con o sin codigo de pais, con espacios o guiones — el sistema los normaliza automaticamente.
 
 ### 4. Primera ejecución — Vincular WhatsApp
 
@@ -134,8 +148,8 @@ launchctl unload ~/Library/LaunchAgents/com.duku.daily-message.plist
 
 ```
 daily-message/
-├── .env.example          # Plantilla de configuración
-├── .env                  # Tu configuración (no se sube a git)
+├── .env.example          # Plantilla de configuracion
+├── .env                  # Tu configuracion (no se sube a git)
 ├── .gitignore            # Archivos excluidos de git
 ├── package.json          # Dependencias y scripts
 ├── README.md             # Este archivo
@@ -144,8 +158,10 @@ daily-message/
 ├── messages.json         # Pool de 1000 mensajes
 └── src/
     ├── index.js           # Punto de entrada + cron scheduling
+    ├── config.js          # Configuracion centralizada (lee .env)
     ├── whatsappClient.js  # Wrapper del cliente WhatsApp
-    └── messageSelector.js # Selección aleatoria sin repetición
+    ├── messageSelector.js # Seleccion aleatoria sin repeticion
+    └── test.js            # Envio de prueba inmediato
 ```
 
 ## Archivos generados en runtime
@@ -158,14 +174,14 @@ Estos archivos se crean automáticamente y no se suben a git:
 
 ## Los mensajes
 
-El archivo `messages.json` contiene 1000 mensajes organizados por categoría:
+El archivo `messages.json` contiene 1000 mensajes organizados en 4 categorias de 250 cada una:
 
-- **buenos_dias** (~250) — Para el envío de las 8:00 AM
-- **buenas_tardes** (~250) — Para el envío de las 6:00 PM
-- **motivacionales** (~250) — Se usan en cualquier horario
-- **amorosos** (~250) — Se usan en cualquier horario
+- **buenos_dias** — Se usan principalmente en el envio de las 8:00 AM
+- **buenas_tardes** — Se usan principalmente en el envio de las 6:00 PM
+- **motivacionales** — Se mezclan aleatoriamente en cualquier horario
+- **amorosos** — Se mezclan aleatoriamente en cualquier horario
 
-El sistema selecciona un mensaje de la categoría apropiada (mañana/tarde) + uno motivacional o amoroso, y no repite hasta agotar esa categoría.
+En cada envio, el sistema elige aleatoriamente: 60% de las veces usa la categoria del horario (buenos_dias o buenas_tardes), 40% de las veces usa motivacionales o amorosos. Ningun mensaje se repite hasta agotar toda su categoria.
 
 ## Personalización
 
@@ -197,8 +213,18 @@ rm sent-log.json
 ## Troubleshooting
 
 ### El QR no aparece
-- Asegúrate de tener Node.js 18+: `node --version`
-- Intenta borrar la sesión: `rm -rf .wwebjs_auth/` y volver a ejecutar
+- Asegurate de tener Node.js 18+: `node --version`
+- Intenta borrar la sesion: `rm -rf .wwebjs_auth/` y volver a ejecutar
+
+### Error de Chromium al arrancar
+- Ocurre frecuentemente en Macs con chip Apple Silicon (M1/M2/M3/M4)
+- Instala Google Chrome desde [chrome.google.com](https://www.google.com/chrome/)
+- Agrega a tu `.env`: `PUPPETEER_EXECUTABLE_PATH=/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+- Reinicia con `npm start`
+
+### WhatsApp Web ya esta abierto en el navegador
+- WhatsApp permite multiples dispositivos vinculados, pero el proceso puede interferir si ya tienes WhatsApp Web abierto en Chrome
+- Cierra WhatsApp Web en el navegador antes de correr `npm start`
 
 ### El mensaje no se envía
 - Verifica que el número en `.env` tenga el formato correcto (código de país + número, sin +, sin espacios)
