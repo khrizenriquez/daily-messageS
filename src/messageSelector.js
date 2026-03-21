@@ -5,17 +5,21 @@ const MESSAGES_FILE = path.join(__dirname, '..', 'messages.json');
 const LOG_FILE = path.join(__dirname, '..', 'sent-log.json');
 
 function loadMessages() {
-  return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
+  try {
+    return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
+  } catch (err) {
+    throw new Error(`No se pudo cargar messages.json: ${err.message}`);
+  }
 }
 
 function loadSentLog() {
   if (!fs.existsSync(LOG_FILE)) {
-    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] };
+    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [], chistes: [] };
   }
   try {
     return JSON.parse(fs.readFileSync(LOG_FILE, 'utf8'));
   } catch {
-    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] };
+    return { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [], chistes: [] };
   }
 }
 
@@ -28,9 +32,9 @@ function getRandomMessage(timeOfDay) {
   const log = loadSentLog();
 
   const primaryCategory = timeOfDay === 'morning' ? 'buenos_dias' : 'buenas_tardes';
-  const supplementary = ['motivacionales', 'amorosos'];
+  const supplementary = ['motivacionales', 'amorosos', 'chistes'];
 
-  // 60% categoria del horario, 40% motivacional o amoroso
+  // 60% categoria del horario, 40% motivacional, amoroso o chiste
   const useSupplementary = Math.random() < 0.4;
   const category = useSupplementary
     ? supplementary[Math.floor(Math.random() * supplementary.length)]

@@ -17,9 +17,10 @@ const mockMessages = {
   buenas_tardes:  fixtureMessages.chistes,
   motivacionales: fixtureMessages.chistes,
   amorosos:       fixtureMessages.chistes,
+  chistes:        fixtureMessages.chistes,
 }
 
-const emptyLog = { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] }
+const emptyLog = { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [], chistes: [] }
 
 function setupFileMocks(sentLog = emptyLog) {
   vi.mocked(fs.existsSync).mockReturnValue(true)
@@ -88,11 +89,11 @@ describe('getRandomMessage', () => {
 
   test('morning con categoria suplementaria puede retornar amorosos', () => {
     // 1. 0.1 < 0.4 => useSupplementary = true
-    // 2. floor(0.99 * 2) = 1 => supplementary[1] = 'amorosos'
+    // 2. floor(0.5 * 3) = 1 => supplementary[1] = 'amorosos'
     // 3. floor(0.99 * 5) = 4 => ultimo indice del pool
     vi.spyOn(Math, 'random')
       .mockReturnValueOnce(0.1)
-      .mockReturnValueOnce(0.99)
+      .mockReturnValueOnce(0.5)
       .mockReturnValueOnce(0.99)
     setupFileMocks()
 
