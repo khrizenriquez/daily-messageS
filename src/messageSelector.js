@@ -61,4 +61,30 @@ function getRandomMessage(timeOfDay) {
   return message;
 }
 
-module.exports = { getRandomMessage };
+function getMessageFromCategory(category) {
+  const messages = loadMessages();
+  const log = loadSentLog();
+
+  const pool = messages[category];
+  if (!pool) throw new Error(`Categoria no encontrada: ${category}`);
+
+  const sent = log[category] || [];
+  let available = pool.map((_, i) => i).filter(i => !sent.includes(i));
+
+  if (available.length === 0) {
+    console.log(`Pool de "${category}" agotado. Reiniciando el ciclo.`);
+    log[category] = [];
+    saveSentLog(log);
+    available = pool.map((_, i) => i);
+  }
+
+  const randomIndex = available[Math.floor(Math.random() * available.length)];
+  const message = pool[randomIndex];
+
+  log[category] = [...(log[category] || []), randomIndex];
+  saveSentLog(log);
+
+  return message;
+}
+
+module.exports = { getRandomMessage, getMessageFromCategory };

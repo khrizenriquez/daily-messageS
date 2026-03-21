@@ -2,7 +2,7 @@ const config = require('./config');
 config.validate();
 
 const { createClient, sendMessage } = require('./whatsappClient');
-const { getRandomMessage } = require('./messageSelector');
+const { getMessageFromCategory } = require('./messageSelector');
 const { appendLog } = require('./logger');
 
 const { FROM_PHONE, TARGET_PHONE } = config;
@@ -27,7 +27,7 @@ client.on('ready', async () => {
     }
     console.log(`Numero destino verificado: tiene WhatsApp activo.`);
 
-    const message = getRandomMessage('morning');
+    const message = getMessageFromCategory('chistes');
     console.log(`Mensaje seleccionado: "${message}"`);
 
     const result = await sendMessage(TARGET_PHONE, message);
