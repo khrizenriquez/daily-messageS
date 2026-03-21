@@ -15,11 +15,39 @@ const client = createClient();
 
 client.on('ready', async () => {
   try {
+    const info = client.info;
+    console.log(`Cuenta autenticada: +${info.wid.user} (${info.pushname})`);
+    console.log(`Enviando a chatId:  ${TARGET_PHONE}@c.us`);
+
+    const isRegistered = await client.isRegisteredUser(`${TARGET_PHONE}@c.us`);
+    if (!isRegistered) {
+      console.error(`El numero ${TARGET_PHONE} no tiene WhatsApp activo o no existe.`);
+      await client.destroy();
+      process.exit(1);
+    }
+    console.log(`Numero destino verificado: tiene WhatsApp activo.`);
+
     const message = getRandomMessage('morning');
     console.log(`Mensaje seleccionado: "${message}"`);
 
     const result = await sendMessage(TARGET_PHONE, message);
-    appendLog(FROM_PHONE, TARGET_PHONE, message, result);
+
+    // Espera hasta 10 segundos para confirmar entrega al dispositivo
+    const ACK_LABELS = { 0: 'pendiente', 1: 'enviado (1 palomita)', 2: 'entregado (2 palomitas)', 3: 'leido (2 palomitas azules)' };
+    const deliveryConfirmed = await new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(null), 10000);
+      client.on('message_ack', (msg, ack) => {
+        if (msg.id.id === result.id) {
+          clearTimeout(timeout);
+          resolve(ack);
+        }
+      });
+    });
+
+    const ackLabel = deliveryConfirmed !== null ? (ACK_LABELS[deliveryConfirmed] || `ack=${deliveryConfirmed}`) : 'sin respuesta en 10s (puede estar offline)';
+    console.log(`Confirmacion de entrega: ${ackLabel}`);
+
+    appendLog(FROM_PHONE, TARGET_PHONE, message, { ...result, ackLabel });
     console.log('Prueba exitosa. Cerrando cliente...');
 
     await client.destroy();
