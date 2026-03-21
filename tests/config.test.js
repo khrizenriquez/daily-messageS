@@ -47,9 +47,7 @@ describe('validate', () => {
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {})
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    // En el entorno de test, FROM_PHONE y TARGET_PHONE son null porque
-    // dotenv esta mockeado y no se han definido las variables de entorno
-    validate()
+    validate({ from: null, target: null })
 
     expect(exitSpy).toHaveBeenCalledWith(1)
 

@@ -1,30 +1,10 @@
 {
-  "buenos_dias": [
-    "Que este dia te traiga claridad y energia para avanzar.",
-    "Cada manana es una oportunidad nueva. Aprovechala.",
-    "Hoy tienes todo lo que necesitas para dar un paso mas.",
-    "El dia empieza contigo. Hazlo tuyo.",
-    "Despierta con proposito. El resto vendra solo."
-  ],
-  "buenas_tardes": [
-    "La tarde es un buen momento para reflexionar sobre lo que lograste hoy.",
-    "Sigue adelante, la tarde aun tiene mucho por darte.",
-    "Un paso a la vez, y llegaras mas lejos de lo que imaginas.",
-    "La constancia de hoy es el resultado de manana.",
-    "Respira. Todavia queda tiempo para lo importante."
-  ],
-  "motivacionales": [
-    "Lo que parece dificil hoy sera tu fortaleza manana.",
-    "No necesitas ser perfecto, solo necesitas seguir intentandolo.",
-    "Cada esfuerzo que haces cuenta, aunque no lo veas de inmediato.",
-    "La version de ti que nunca se rinde es la mas poderosa.",
-    "Confiar en el proceso es parte del camino."
-  ],
-  "amorosos": [
-    "Eres importante para las personas que te rodean, aunque no siempre lo digan.",
-    "Hay alguien que agradece que existas.",
-    "Tu presencia hace diferencia en la vida de otros.",
-    "Mereces el mismo amor que le das a los demas.",
-    "Eres suficiente, exactamente como eres hoy."
+  "chistes": [
+    "Por que el libro de matematicas estaba triste? Porque tenia demasiados problemas.",
+    "Que le dice un techo a otro techo? Nada, los techos no hablan.",
+    "Por que el sol no va a la universidad? Porque ya tiene millones de grados.",
+    "Que le dijo el semaforo al auto? No me mires, me estoy cambiando.",
+    "Por que los pajaros vuelan hacia el sur en invierno? Porque caminando tardarian demasiado."
   ]
 }
+

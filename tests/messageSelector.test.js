@@ -1,16 +1,22 @@
 import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'fs'
+import { readFileSync } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { getRandomMessage } from '../src/messageSelector.js'
 
-// vi.spyOn modifica el objeto fs real, que es el mismo singleton que usa
-// messageSelector.js con require('fs'). A diferencia de vi.mock, este enfoque
-// funciona con modulos CJS fuente.
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const fixtureMessages = JSON.parse(
+  readFileSync(path.join(__dirname, 'fixtures/messages.json'), 'utf8')
+)
 
+// El fixture solo tiene la categoria "chistes".
+// Los tests usan esa categoria como pool para morning y evening.
 const mockMessages = {
-  buenos_dias:    Array.from({ length: 5 }, (_, i) => `Buenos dias ${i + 1}`),
-  buenas_tardes:  Array.from({ length: 5 }, (_, i) => `Buenas tardes ${i + 1}`),
-  motivacionales: Array.from({ length: 5 }, (_, i) => `Motivacional ${i + 1}`),
-  amorosos:       Array.from({ length: 5 }, (_, i) => `Amoroso ${i + 1}`),
+  buenos_dias:    fixtureMessages.chistes,
+  buenas_tardes:  fixtureMessages.chistes,
+  motivacionales: fixtureMessages.chistes,
+  amorosos:       fixtureMessages.chistes,
 }
 
 const emptyLog = { buenos_dias: [], buenas_tardes: [], motivacionales: [], amorosos: [] }
@@ -49,27 +55,26 @@ describe('getRandomMessage', () => {
     expect(fs.writeFileSync).toHaveBeenCalledOnce()
   })
 
-  test('morning con categoria primaria retorna mensaje de buenos_dias', () => {
+  test('morning con categoria primaria retorna mensaje del fixture', () => {
     // Math.random >= 0.4 => useSupplementary = false => primaryCategory = 'buenos_dias'
     vi.spyOn(Math, 'random').mockReturnValue(0.5)
     setupFileMocks()
 
     const msg = getRandomMessage('morning')
 
-    expect(mockMessages.buenos_dias).toContain(msg)
+    expect(fixtureMessages.chistes).toContain(msg)
   })
 
-  test('evening con categoria primaria retorna mensaje de buenas_tardes', () => {
+  test('evening con categoria primaria retorna mensaje del fixture', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.5)
     setupFileMocks()
 
     const msg = getRandomMessage('evening')
 
-    expect(mockMessages.buenas_tardes).toContain(msg)
+    expect(fixtureMessages.chistes).toContain(msg)
   })
 
-  test('morning con categoria suplementaria retorna mensaje de motivacionales', () => {
-    // Llamadas a Math.random en getRandomMessage:
+  test('morning con categoria suplementaria retorna mensaje del fixture', () => {
     // 1. 0.1 < 0.4 => useSupplementary = true
     // 2. floor(0.1 * 2) = 0 => supplementary[0] = 'motivacionales'
     // 3. floor(0.1 * 5) = 0 => primer indice del pool
@@ -78,7 +83,7 @@ describe('getRandomMessage', () => {
 
     const msg = getRandomMessage('morning')
 
-    expect(mockMessages.motivacionales).toContain(msg)
+    expect(fixtureMessages.chistes).toContain(msg)
   })
 
   test('morning con categoria suplementaria puede retornar amorosos', () => {
@@ -93,7 +98,7 @@ describe('getRandomMessage', () => {
 
     const msg = getRandomMessage('morning')
 
-    expect(mockMessages.amorosos).toContain(msg)
+    expect(fixtureMessages.chistes).toContain(msg)
   })
 
   test('no repite mensajes ya enviados en la misma categoria', () => {
@@ -104,7 +109,7 @@ describe('getRandomMessage', () => {
     const msg = getRandomMessage('morning')
 
     // El unico disponible es el indice 3
-    expect(msg).toBe(mockMessages.buenos_dias[3])
+    expect(msg).toBe(fixtureMessages.chistes[3])
   })
 
   test('reinicia el pool cuando la categoria se agota', () => {
